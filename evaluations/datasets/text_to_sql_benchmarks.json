@@ -1,0 +1,66 @@
+[
+  {
+    "id": "SQL-001",
+    "question": "What is the total revenue across all completed orders?",
+    "expected_sql": "SELECT SUM(\"total_revenue\") AS total_revenue FROM \"data\" WHERE \"status\" = 'Completed'",
+    "expected_columns": ["total_revenue"],
+    "check_type": "scalar_numeric",
+    "expected_value": 2440.0
+  },
+  {
+    "id": "SQL-002",
+    "question": "ما هو إجمالي عدد الوحدات المباعة لكل فئة؟",
+    "expected_sql": "SELECT \"category\", SUM(\"units_sold\") AS total_units FROM \"data\" GROUP BY \"category\" ORDER BY total_units DESC",
+    "expected_columns": ["category", "total_units"],
+    "check_type": "row_count",
+    "expected_row_count": 3
+  },
+  {
+    "id": "SQL-003",
+    "question": "What are the top 3 countries by total revenue?",
+    "expected_sql": "SELECT \"country\", SUM(\"total_revenue\") AS revenue FROM \"data\" GROUP BY \"country\" ORDER BY revenue DESC LIMIT 3",
+    "expected_columns": ["country", "revenue"],
+    "check_type": "row_count",
+    "expected_row_count": 3
+  },
+  {
+    "id": "SQL-004",
+    "question": "كم عدد الطلبات التي تم إلغاؤها؟",
+    "expected_sql": "SELECT COUNT(*) AS cancelled_count FROM \"data\" WHERE \"status\" = 'Cancelled'",
+    "expected_columns": ["cancelled_count"],
+    "check_type": "scalar_numeric",
+    "expected_value": 1
+  },
+  {
+    "id": "SQL-005",
+    "question": "What is the average unit price for products in Furniture category?",
+    "expected_sql": "SELECT AVG(\"unit_price\") AS avg_price FROM \"data\" WHERE \"category\" = 'Furniture'",
+    "expected_columns": ["avg_price"],
+    "check_type": "scalar_numeric",
+    "expected_value": 137.5
+  },
+  {
+    "id": "SQL-006",
+    "question": "List all distinct product names ordered by customers in Egypt.",
+    "expected_sql": "SELECT DISTINCT \"product_name\" FROM \"data\" WHERE \"country\" = 'Egypt'",
+    "expected_columns": ["product_name"],
+    "check_type": "min_rows",
+    "min_rows": 4
+  },
+  {
+    "id": "SQL-007",
+    "question": "What is the most expensive single unit price sold?",
+    "expected_sql": "SELECT MAX(\"unit_price\") AS max_price FROM \"data\"",
+    "expected_columns": ["max_price"],
+    "check_type": "scalar_numeric",
+    "expected_value": 220.0
+  },
+  {
+    "id": "SQL-008",
+    "question": "How many total unique customers are in the dataset?",
+    "expected_sql": "SELECT COUNT(DISTINCT \"customer_name\") AS customer_count FROM \"data\"",
+    "expected_columns": ["customer_count"],
+    "check_type": "scalar_numeric",
+    "expected_value": 12
+  }
+]

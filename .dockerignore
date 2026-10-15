@@ -1,0 +1,18 @@
+.git
+.github
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.env
+uploads/*
+!uploads/.gitkeep
+tests
+.pytest_cache
+.ruff_cache
+.mypy_cache
+Data Assistant.drawio
+Data Assistant.png
+Dockerfile
+.dockerignore

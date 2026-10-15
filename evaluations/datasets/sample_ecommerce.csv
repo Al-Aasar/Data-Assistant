@@ -1,0 +1,16 @@
+order_id,customer_name,country,category,product_name,units_sold,unit_price,total_revenue,order_date,status
+ORD-1001,Ahmed Mansour,Egypt,Electronics,Wireless Headphones,2,50.0,100.0,2024-01-15,Completed
+ORD-1002,Fatima Zahra,Morocco,Furniture,Office Desk,1,220.0,220.0,2024-01-18,Completed
+ORD-1003,Omar Al-Hassan,Saudi Arabia,Electronics,Smart Watch,3,150.0,450.0,2024-02-05,Completed
+ORD-1004,Layla Mahmoud,UAE,Apparel,Running Shoes,2,80.0,160.0,2024-02-12,Completed
+ORD-1005,Khaled Youssef,Egypt,Apparel,Cotton T-Shirt,5,20.0,100.0,2024-02-20,Completed
+ORD-1006,Sara Al-Kuwaiti,Kuwait,Electronics,Laptop Stand,2,35.0,70.0,2024-03-01,Completed
+ORD-1007,Zaid Al-Ali,Jordan,Furniture,Ergonomic Chair,2,180.0,360.0,2024-03-10,Completed
+ORD-1008,Mona Nabil,Egypt,Electronics,Mechanical Keyboard,1,90.0,90.0,2024-03-15,Cancelled
+ORD-1009,Hassan Tarek,Saudi Arabia,Apparel,Leather Jacket,1,190.0,190.0,2024-03-22,Completed
+ORD-1010,Nour El-Din,UAE,Furniture,Bookshelf,2,110.0,220.0,2024-04-05,Completed
+ORD-1011,Ahmed Mansour,Egypt,Electronics,USB-C Hub,4,25.0,100.0,2024-04-12,Completed
+ORD-1012,Salma Fawzi,Egypt,Apparel,Sneakers,2,75.0,150.0,2024-04-20,Completed
+ORD-1013,Tariq Hamza,Jordan,Electronics,Smart Watch,1,150.0,150.0,2024-04-28,Completed
+ORD-1014,Fatima Zahra,Morocco,Apparel,Silk Scarf,3,30.0,90.0,2024-05-02,Completed
+ORD-1015,Khaled Youssef,Egypt,Furniture,Desk Lamp,2,40.0,80.0,2024-05-14,Completed
