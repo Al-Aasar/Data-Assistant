@@ -1,6 +1,7 @@
 # Data Assistant
 ![Tests](https://github.com/Al-Aasar/Data-Assistant/actions/workflows/tests.yml/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 An enterprise-grade, conversational multi-agent Business Intelligence (BI) system. Data Assistant empowers users to upload tabular datasets (CSV, Excel) and ask business questions in natural language (supporting both Arabic and English).
 
 The system automatically understands data semantics, generates safe and optimized SQL executed in an isolated in-memory DuckDB sandbox, and translates raw results into clear, executive-level business answers.
