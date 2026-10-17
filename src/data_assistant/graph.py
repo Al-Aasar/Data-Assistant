@@ -1,6 +1,6 @@
 from langgraph.graph import StateGraph, END
 from typing import Literal
-
+import asyncio
 from data_assistant.state import AssistantState
 from data_assistant.agents.Guardrails_Agent import guardrail_agent
 from data_assistant.agents.Analysis_Agent import analysis_agent, result_agent
@@ -127,17 +127,17 @@ def create_assistant_graph():
 
 async def ingest_file(file_path: str) -> dict:
     """Validates the uploaded file, extracts profiles, and produces schema context."""
-    check = validate_file(file_path)
+    check = await asyncio.to_thread(validate_file, file_path)
     if not check.allowed:
         return {
             "success": False,
             "error": check.reason,
             "file_path": file_path,
         }
-
+ 
     kind = check.kind
     try:
-        profile_dfs = analyze_file(file_path, kind)
+        profile_dfs = await asyncio.to_thread(analyze_file, file_path, kind)
         # Convert DataFrames to dict of records for JSON serialization
         file_profile = {
             table_name: df.to_dict(orient="records")
@@ -150,7 +150,7 @@ async def ingest_file(file_path: str) -> dict:
             "file_path": file_path,
             "file_kind": kind,
         }
-
+ 
     # Generate schema context via Knowledge Agent
     initial_state: AssistantState = {
         "file_path": str(file_path),
@@ -159,12 +159,17 @@ async def ingest_file(file_path: str) -> dict:
         "llm_calls": 0,
     }
     knowledge_res = await knowlage_agent(initial_state)
-
-    return {
+    schema_context = knowledge_res.get("schema_context", "")
+ 
+    result = {
         "success": True,
         "file_path": str(file_path),
         "file_kind": str(kind),
         "file_profile": file_profile,
-        "schema_context": knowledge_res.get("schema_context", ""),
+        "schema_context": schema_context,
         "llm_calls": knowledge_res.get("llm_calls", 0),
     }
+    if not schema_context:
+        result["warning"] = "The file was read, but no description of it could be generated."
+    return result
+ 
