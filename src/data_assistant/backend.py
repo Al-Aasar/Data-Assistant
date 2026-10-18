@@ -5,6 +5,7 @@ import uuid
 from pathlib import Path
 from typing import Optional, Any
 from dotenv import load_dotenv
+import uvicorn
 
 # Load environment variables
 load_dotenv()
@@ -170,5 +171,5 @@ async def chat_endpoint(request: ChatRequest):
 
 
 if __name__ == "__main__":
-    import uvicorn
+    
     uvicorn.run("data_assistant.backend:app", host="0.0.0.0", port=8000, reload=True)
