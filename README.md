@@ -147,6 +147,7 @@ or via Uvicorn directly:
 uv run uvicorn data_assistant.backend:app --host 0.0.0.0 --port 8000 --reload
 ```
 
+- Web Dashboard (UI): `http://localhost:8000/` (or `http://localhost:8000/app`)
 - Interactive API Documentation (Swagger UI): `http://localhost:8000/docs`
 - Alternative ReDoc UI: `http://localhost:8000/redoc`
 

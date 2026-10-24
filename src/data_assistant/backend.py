@@ -10,8 +10,10 @@ import uvicorn
 # Load environment variables
 load_dotenv()
 
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 from data_assistant.graph import create_assistant_graph, ingest_file
@@ -19,6 +21,7 @@ from data_assistant.state import AssistantState
 
 UPLOAD_DIR = Path("uploads")
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
 
 app = FastAPI(
     title="Data Assistant API",
@@ -57,11 +60,15 @@ class ChatResponse(BaseModel):
 
 
 @app.get("/")
-def root():
+def root(request: Request):
+    accept = request.headers.get("accept", "")
+    if "text/html" in accept and FRONTEND_DIR.is_dir() and (FRONTEND_DIR / "index.html").is_file():
+        return FileResponse(FRONTEND_DIR / "index.html")
     return {
         "message": "Welcome to Data Assistant API",
         "docs_url": "/docs",
         "health_url": "/api/health",
+        "frontend_url": "/app",
     }
 
 
@@ -170,6 +177,73 @@ async def chat_endpoint(request: ChatRequest):
     )
 
 
+@app.post("/api/sample")
+async def sample_dataset_endpoint():
+    """Loads and ingests the built-in sample e-commerce dataset for quick testing."""
+    candidate_paths = [
+        Path("evaluations/datasets/sample_ecommerce.csv").resolve(),
+        Path(__file__).resolve().parent.parent.parent / "evaluations" / "datasets" / "sample_ecommerce.csv",
+    ]
+    sample_file = None
+    for p in candidate_paths:
+        if p.is_file():
+            sample_file = p
+            break
+
+    if not sample_file:
+        raise HTTPException(status_code=404, detail="Sample dataset file not found.")
+
+    unique_name = f"sample_{sample_file.name}"
+    save_path = UPLOAD_DIR / unique_name
+    try:
+        shutil.copyfile(sample_file, save_path)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to prepare sample dataset: {e}")
+
+    ingest_result = await ingest_file(str(save_path))
+    if not ingest_result.get("success"):
+        raise HTTPException(
+            status_code=400,
+            detail=ingest_result.get("error", "Failed to ingest sample dataset."),
+        )
+
+    parsed_context = {}
+    schema_raw = ingest_result.get("schema_context", "")
+    if schema_raw:
+        try:
+            parsed_context = json.loads(schema_raw)
+        except Exception:
+            parsed_context = {"raw": schema_raw}
+
+    return {
+        "message": "Sample dataset loaded and analyzed successfully.",
+        "file_path": ingest_result["file_path"],
+        "file_kind": ingest_result["file_kind"],
+        "schema_context": schema_raw,
+        "metadata": parsed_context,
+    }
+
+
+# Static frontend file routes
+if FRONTEND_DIR.is_dir():
+    @app.get("/style.css")
+    def get_frontend_css():
+        css_file = FRONTEND_DIR / "style.css"
+        if css_file.is_file():
+            return FileResponse(css_file, media_type="text/css")
+        raise HTTPException(status_code=404, detail="style.css not found")
+
+    @app.get("/app.js")
+    def get_frontend_js():
+        js_file = FRONTEND_DIR / "app.js"
+        if js_file.is_file():
+            return FileResponse(js_file, media_type="application/javascript")
+        raise HTTPException(status_code=404, detail="app.js not found")
+
+    app.mount("/app", StaticFiles(directory=str(FRONTEND_DIR), html=True), name="frontend_app")
+
+
 if __name__ == "__main__":
     
     uvicorn.run("data_assistant.backend:app", host="0.0.0.0", port=8000, reload=True)
+

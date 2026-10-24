@@ -133,6 +133,17 @@ class TestDataAssistant(unittest.TestCase):
         self.assertEqual(res.status_code, 200)
         self.assertIn("docs_url", res.json())
 
+        # Test browser HTML request
+        res_html = client.get("/", headers={"accept": "text/html,application/xhtml+xml"})
+        self.assertEqual(res_html.status_code, 200)
+        self.assertIn("text/html", res_html.headers.get("content-type", ""))
+
+        # Test static assets
+        res_css = client.get("/style.css")
+        self.assertEqual(res_css.status_code, 200)
+        res_js = client.get("/app.js")
+        self.assertEqual(res_js.status_code, 200)
+
         res = client.post(
             "/api/upload",
             files={"file": ("test.txt", b"plain text content", "text/plain")},
